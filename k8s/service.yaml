@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: deployment-1-service
+  namespace: um-deployment
+spec:
+  selector:
+    app: deployment-1
+  type: LoadBalancer
+  ports:
+    - port: 9900
+      targetPort: 9900
+      protocol: TCP
