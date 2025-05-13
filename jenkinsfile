@@ -1,0 +1,48 @@
+pipeline {
+  agent any
+
+  environment {
+    PROJECT_ID = 'um-project-459607'
+    CLUSTER_NAME = 'autopilot-cluster-1'
+    REGION = 'us-central1'
+    NAMESPACE = 'um-deployment'
+  }
+
+  stages {
+    stage('Clone Repo') {
+      steps {
+        git 'https://github.com/naveengadde123/universal-messaging-deploy.git'
+      }
+    }
+
+    stage('Authenticate to GCP') {
+      steps {
+        withCredentials([file(credentialsId: 'gcp-sa-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+          sh '''
+            gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+            gcloud config set project $PROJECT_ID
+            gcloud container clusters get-credentials $CLUSTER_NAME --region $REGION
+          '''
+        }
+      }
+    }
+
+    stage('Deploy to GKE') {
+      steps {
+        sh '''
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+        '''
+      }
+    }
+  }
+
+  post {
+    success {
+      echo 'Deployment successful!'
+    }
+    failure {
+      echo 'Something went wrong.'
+    }
+  }
+}
