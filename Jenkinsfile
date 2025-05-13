@@ -21,38 +21,38 @@ pipeline {
         stage('Authenticate with GCP') {
             steps {
                 withCredentials([file(credentialsId: "${CREDENTIALS_ID}", variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    sh '''
-                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-                        gcloud config set project $PROJECT_ID
+                    bat """
+                        gcloud auth activate-service-account --key-file=%GOOGLE_APPLICATION_CREDENTIALS%
+                        gcloud config set project %PROJECT_ID%
                         gcloud auth configure-docker
-                    '''
+                    """
                 }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                    docker build -t $GCR_IMAGE .
-                '''
+                bat """
+                    docker build -t %GCR_IMAGE% .
+                """
             }
         }
 
         stage('Push Docker Image to GCR') {
             steps {
-                sh '''
-                    docker push $GCR_IMAGE
-                '''
+                bat """
+                    docker push %GCR_IMAGE%
+                """
             }
         }
 
         stage('Deploy to GKE') {
             steps {
-                sh '''
-                    gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE --project $PROJECT_ID
+                bat """
+                    gcloud container clusters get-credentials %CLUSTER_NAME% --zone %CLUSTER_ZONE% --project %PROJECT_ID%
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
-                '''
+                """
             }
         }
     }
