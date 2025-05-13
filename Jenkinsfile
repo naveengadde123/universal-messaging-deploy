@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID = 'um-project-459607'#projest
+        PROJECT_ID = 'um-project-459607'
         CLUSTER_NAME = 'autopilot-cluster-1'
         CLUSTER_ZONE = 'us-central1-a'
         IMAGE_NAME = 'um-container'
