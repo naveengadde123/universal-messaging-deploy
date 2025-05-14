@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID = 'um-project-459607'
-        CLUSTER_NAME = 'autopilot-cluster-1'
-        CLUSTER_ZONE = 'us-central1-a'
-        IMAGE_NAME = 'um-container'
-        IMAGE_TAG = 'latest'
-        GCR_IMAGE = "gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
-        CREDENTIALS_ID = 'gcp-sa-key'
+        PROJECT_ID    = 'um-project-459607'
+        CLUSTER_NAME  = 'autopilot-cluster-1'
+        CLUSTER_REGION= 'us-central1'
+        IMAGE_NAME    = 'um-container'
+        IMAGE_TAG     = 'latest'
+        GCR_IMAGE     = "gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
+        CREDENTIALS_ID= 'gcp-sa-key'
     }
 
     stages {
@@ -52,10 +52,12 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 sh '''
-                    echo "Getting GKE credentials..."
-                    gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE --project $PROJECT_ID
+                    echo "Fetching GKE credentials for Autopilot cluster..."
+                    gcloud container clusters get-credentials $CLUSTER_NAME \
+                        --region $CLUSTER_REGION \
+                        --project $PROJECT_ID
 
-                    echo "Deploying to GKE..."
+                    echo "Applying Kubernetes manifests..."
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
                 '''
