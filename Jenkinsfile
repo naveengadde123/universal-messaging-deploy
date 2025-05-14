@@ -21,44 +21,44 @@ pipeline {
         stage('Authenticate with GCP') {
             steps {
                 withCredentials([file(credentialsId: "${CREDENTIALS_ID}", variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    bat """
-                        echo Authenticating with GCP...
-                        gcloud auth activate-service-account --key-file=%%GOOGLE_APPLICATION_CREDENTIALS%%
-                        gcloud config set project %%PROJECT_ID%%
+                    sh '''
+                        echo "Authenticating with GCP..."
+                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+                        gcloud config set project $PROJECT_ID
                         gcloud auth configure-docker
-                    """
+                    '''
                 }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat """
-                    echo Building Docker image...
-                    docker build -t %%GCR_IMAGE%% .
-                """
+                sh '''
+                    echo "Building Docker image..."
+                    docker build -t $GCR_IMAGE .
+                '''
             }
         }
 
         stage('Push Docker Image to GCR') {
             steps {
-                bat """
-                    echo Pushing Docker image to GCR...
-                    docker push %%GCR_IMAGE%%
-                """
+                sh '''
+                    echo "Pushing Docker image to GCR..."
+                    docker push $GCR_IMAGE
+                '''
             }
         }
 
         stage('Deploy to GKE') {
             steps {
-                bat """
-                    echo Getting GKE credentials...
-                    gcloud container clusters get-credentials %%CLUSTER_NAME%% --zone %%CLUSTER_ZONE%% --project %%PROJECT_ID%%
+                sh '''
+                    echo "Getting GKE credentials..."
+                    gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE --project $PROJECT_ID
 
-                    echo Deploying to GKE...
+                    echo "Deploying to GKE..."
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
-                """
+                '''
             }
         }
     }
