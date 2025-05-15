@@ -2,20 +2,18 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID     = 'um-project-459607'          // ✅ GCP project ID
-        CLUSTER_NAME   = 'autopilot-cluster-1'        // ✅ GKE cluster name
-        CLUSTER_REGION = 'us-central1'                // ✅ Region for GKE Autopilot cluster (not zone)
-        IMAGE_NAME     = 'um-container'               // ✅ Docker image name
-        IMAGE_TAG      = 'latest'                     // ✅ Image tag
-        GCR_IMAGE      = "gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"  // ✅ Full image path for GCR
-        CREDENTIALS_ID = 'gcp-sa-key'                 // ✅ Jenkins credentials ID for GCP service account
+        PROJECT_ID     = 'um-project-459607'
+        CLUSTER_NAME   = 'autopilot-cluster-1'
+        CLUSTER_REGION = 'us-central1'
+        IMAGE_NAME     = 'um-container'
+        IMAGE_TAG      = 'latest'
+        GCR_IMAGE      = "gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
+        CREDENTIALS_ID = 'gcp-sa-key'
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
-                // ❗ Recommended: Add Git credentials (optional if public repo)
                 git branch: 'main', url: 'https://github.com/naveengadde123/universal-messaging-deploy.git'
             }
         }
@@ -24,10 +22,9 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: "${CREDENTIALS_ID}", variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     sh '''
-                        echo "Authenticating with GCP..."
                         gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
                         gcloud config set project "$PROJECT_ID"
-                        gcloud auth configure-docker  # ✅ Needed for Docker to push to GCR
+                        gcloud auth configure-docker
                     '''
                 }
             }
@@ -36,7 +33,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    echo "Building Docker image..."
                     docker build -t "$GCR_IMAGE" .
                 '''
             }
@@ -45,7 +41,6 @@ pipeline {
         stage('Push Docker Image to GCR') {
             steps {
                 sh '''
-                    echo "Pushing Docker image to GCR..."
                     docker push "$GCR_IMAGE"
                 '''
             }
@@ -54,12 +49,7 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 sh '''
-                    echo "Fetching GKE credentials for Autopilot cluster..."
-                    gcloud container clusters get-credentials "$CLUSTER_NAME" \
-                        --region "$CLUSTER_REGION" \
-                        --project "$PROJECT_ID"
-
-                    echo "Applying Kubernetes manifests..."
+                    gcloud container clusters get-credentials "$CLUSTER_NAME" --region "$CLUSTER_REGION" --project "$PROJECT_ID"
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
                 '''
@@ -69,10 +59,10 @@ pipeline {
 
     post {
         failure {
-            echo '❌ Pipeline failed!'
+            echo 'Pipeline failed!'
         }
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo 'Pipeline completed successfully!'
         }
     }
 }
