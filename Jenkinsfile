@@ -2,18 +2,20 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID     = 'um-project-459607'
-        CLUSTER_NAME   = 'autopilot-cluster-1'
-        CLUSTER_REGION = 'us-central1'
-        IMAGE_NAME     = 'um-container'
-        IMAGE_TAG      = 'latest'
-        GCR_IMAGE      = "gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
-        CREDENTIALS_ID = 'gcp-sa-key'
+        PROJECT_ID     = 'um-project-459607'          // ✅ GCP project ID
+        CLUSTER_NAME   = 'autopilot-cluster-1'        // ✅ GKE cluster name
+        CLUSTER_REGION = 'us-central1'                // ✅ Region for GKE Autopilot cluster (not zone)
+        IMAGE_NAME     = 'um-container'               // ✅ Docker image name
+        IMAGE_TAG      = 'latest'                     // ✅ Image tag
+        GCR_IMAGE      = "gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"  // ✅ Full image path for GCR
+        CREDENTIALS_ID = 'gcp-sa-key'                 // ✅ Jenkins credentials ID for GCP service account
     }
 
     stages {
+
         stage('Checkout Code') {
             steps {
+                // ❗ Recommended: Add Git credentials (optional if public repo)
                 git branch: 'main', url: 'https://github.com/naveengadde123/universal-messaging-deploy.git'
             }
         }
@@ -25,7 +27,7 @@ pipeline {
                         echo "Authenticating with GCP..."
                         gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
                         gcloud config set project "$PROJECT_ID"
-                        gcloud auth configure-docker
+                        gcloud auth configure-docker  # ✅ Needed for Docker to push to GCR
                     '''
                 }
             }
@@ -67,10 +69,10 @@ pipeline {
 
     post {
         failure {
-            echo ' Pipeline failed!'
+            echo '❌ Pipeline failed!'
         }
         success {
-            echo ' Pipeline completed successfully!'
+            echo '✅ Pipeline completed successfully!'
         }
     }
 }
