@@ -8,3 +8,4 @@ WORKDIR /opt/um
 
 # Define startup command
 CMD ["./start-server.sh"]
+
