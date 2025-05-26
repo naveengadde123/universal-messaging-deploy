@@ -4,7 +4,7 @@ metadata:
   name: deployment-1
   namespace: um-deployment
 spec:
-  replicas: 3 # Number of pod replicas to run
+  replicas: 3
   selector:
     matchLabels:
       app: deployment-1
@@ -18,3 +18,13 @@ spec:
           image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container
           ports:
             - containerPort: 9900
+          readinessProbe:
+            tcpSocket:
+              port: 9900
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9900
+            initialDelaySeconds: 30
+            periodSeconds: 20
