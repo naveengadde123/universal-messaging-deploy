@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: um-config
+  namespace: um-deployment
+data:
+  nserver.conf: |
+    # Universal Messaging Server Configuration
+    REALM=nsp://0.0.0.0:9900
+    SERVER_NAME=umserver
+    LOG_LEVEL=INFO
+    MAX_MEMORY=1024m
+    MIN_MEMORY=512m
+    JVM_OPTS=-Djava.net.preferIPv4Stack=true -Dum.server.name=umserver

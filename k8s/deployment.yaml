@@ -28,3 +28,17 @@ spec:
               port: 9900
             initialDelaySeconds: 30
             periodSeconds: 20
+          volumeMounts:
+            - name: um-data
+              mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
+            # Optional config file mount
+            - name: um-config
+              mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
+              subPath: nserver.conf
+      volumes:
+        - name: um-data
+          persistentVolumeClaim:
+            claimName: um-data-pvc
+        - name: um-config
+          configMap:
+            name: um-config

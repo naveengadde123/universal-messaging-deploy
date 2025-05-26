@@ -7,7 +7,7 @@ spec:
   selector:
     app: deployment-1
   type: LoadBalancer
-  externalTrafficPolicy: Local  # ADD THIS LINE
+  externalTrafficPolicy: Local
   ports:
     - port: 9900
       targetPort: 9900

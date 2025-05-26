@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: um-data-pvc
+  namespace: um-deployment
+spec:
+  accessModes:
+    - ReadWriteMany           # allow multiple pods to mount for read/write
+  storageClassName: filestore-rwx  # your Filestore CSI StorageClass
+  resources:
+    requests:
+      storage: 10Gi
