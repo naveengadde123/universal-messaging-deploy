@@ -5,8 +5,8 @@ metadata:
   namespace: um-deployment
 spec:
   accessModes:
-    - ReadWriteMany           # allow multiple pods to mount for read/write
-  storageClassName: filestore-rwx  # your Filestore CSI StorageClass
+    - ReadWriteMany
+  storageClassName: filestore-rwx
   resources:
     requests:
       storage: 10Gi
