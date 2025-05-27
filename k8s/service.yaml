@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: deployment-1-service
   namespace: um-deployment
+  labels:
+    app: deployment-1
 spec:
   selector:
     app: deployment-1
@@ -10,6 +12,6 @@ spec:
   externalTrafficPolicy: Local
   ports:
     - name: nsp
+      protocol: TCP
       port: 9900
       targetPort: 9900
-      protocol: TCP
