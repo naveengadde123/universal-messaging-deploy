@@ -58,7 +58,7 @@ pipeline {
                     # 4. Deploy application
                     kubectl apply -n "$NAMESPACE" -f k8s/deployment.yaml
 
-                    # 5. Expose service
+                    # 5. Expose service 
                     kubectl apply -n "$NAMESPACE" -f k8s/service.yaml
                 '''
             }
