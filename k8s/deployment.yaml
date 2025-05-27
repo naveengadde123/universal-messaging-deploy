@@ -5,6 +5,11 @@ metadata:
   namespace: um-deployment
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: deployment-1
@@ -15,7 +20,8 @@ spec:
     spec:
       containers:
         - name: um-container
-          image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container
+          image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
+          imagePullPolicy: Always  # Ensure the latest image is pulled every time
           ports:
             - containerPort: 9900
           readinessProbe:
@@ -31,7 +37,6 @@ spec:
           volumeMounts:
             - name: um-data
               mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
-            # Optional config file mount
             - name: um-config
               mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
               subPath: nserver.conf
