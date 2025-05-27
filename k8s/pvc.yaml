@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: filestore-rwx
   resources:
     requests:
       storage: 10Gi
+  storageClassName: filestore-rwx
