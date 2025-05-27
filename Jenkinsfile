@@ -9,6 +9,7 @@ pipeline {
         IMAGE_TAG      = 'latest'
         GCR_IMAGE      = "gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
         CREDENTIALS_ID = 'gcp-sa-key'
+        NAMESPACE      = 'um-deployment'
     }
 
     stages {
@@ -30,17 +31,10 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build & Push Image') {
             steps {
                 sh '''
                     docker build -t "$GCR_IMAGE" .
-                '''
-            }
-        }
-
-        stage('Push Docker Image to GCR') {
-            steps {
-                sh '''
                     docker push "$GCR_IMAGE"
                 '''
             }
@@ -49,19 +43,23 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 sh '''
-                    gcloud container clusters get-credentials "$CLUSTER_NAME" --region "$CLUSTER_REGION" --project "$PROJECT_ID"
+                    gcloud container clusters get-credentials "$CLUSTER_NAME" \
+                      --region "$CLUSTER_REGION" --project "$PROJECT_ID"
 
-                    # Apply Persistent Volume Claim
-                    kubectl apply -f k8s/pvc.yaml
+                    # 1. Ensure namespace exists
+                    kubectl create ns "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
 
-                    # Apply ConfigMap (optional - if you have one)
-                    if [ -f k8s/configmap.yaml ]; then
-                      kubectl apply -f k8s/configmap.yaml
-                    fi
+                    # 2. Apply PVC
+                    kubectl apply -n "$NAMESPACE" -f k8s/pvc.yaml
 
-                    # Apply Deployment and Service
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
+                    # 3. Apply ConfigMap
+                    kubectl apply -n "$NAMESPACE" -f k8s/configmap.yaml
+
+                    # 4. Deploy application
+                    kubectl apply -n "$NAMESPACE" -f k8s/deployment.yaml
+
+                    # 5. Expose service
+                    kubectl apply -n "$NAMESPACE" -f k8s/service.yaml
                 '''
             }
         }
