@@ -9,7 +9,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-      maxSurge: 1
+      maxSurge: 0
   selector:
     matchLabels:
       app: deployment-1
@@ -21,7 +21,7 @@ spec:
       containers:
         - name: um-container
           image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
-          imagePullPolicy: Always  # Ensure the latest image is pulled every time
+          imagePullPolicy: Always
           ports:
             - containerPort: 9900
           readinessProbe:
