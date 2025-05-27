@@ -50,6 +50,16 @@ pipeline {
             steps {
                 sh '''
                     gcloud container clusters get-credentials "$CLUSTER_NAME" --region "$CLUSTER_REGION" --project "$PROJECT_ID"
+
+                    # Apply Persistent Volume Claim
+                    kubectl apply -f k8s/pvc.yaml
+
+                    # Apply ConfigMap (optional - if you have one)
+                    if [ -f k8s/configmap.yaml ]; then
+                      kubectl apply -f k8s/configmap.yaml
+                    fi
+
+                    # Apply Deployment and Service
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
                 '''
@@ -59,11 +69,10 @@ pipeline {
 
     post {
         failure {
-            echo 'Pipeline failed!'
+            echo '❌ Pipeline failed!'
         }
         success {
-            echo 'Pipeline completed successfully!'
+            echo '✅ Pipeline completed successfully!'
         }
     }
 }
-
