@@ -9,6 +9,7 @@ spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
   ports:
-    - port: 9900
+    - name: nsp
+      port: 9900
       targetPort: 9900
       protocol: TCP
