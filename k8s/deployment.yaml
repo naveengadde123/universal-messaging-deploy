@@ -9,7 +9,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-      maxSurge: 0
+      maxSurge: 1 # Allow one extra pod during rollout to speed up updates
   selector:
     matchLabels:
       app: deployment-1
@@ -19,31 +19,48 @@ spec:
         app: deployment-1
     spec:
       containers:
-        - name: um-container
-          image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 9900
-          readinessProbe:
-            tcpSocket:
-              port: 9900
-            initialDelaySeconds: 20
-            periodSeconds: 10
-          livenessProbe:
-            tcpSocket:
-              port: 9900
-            initialDelaySeconds: 30
-            periodSeconds: 20
-          volumeMounts:
-            - name: um-data
-              mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
-            - name: um-config
-              mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
-              subPath: nserver.conf
-      volumes:
+      - name: um-container
+        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9900
+          name: nsp
+        - containerPort: 9000 # Added for UM admin console (optional, confirm if needed)
+          name: admin
+        readinessProbe:
+          httpGet: # Use HTTP if UM supports /rest/monitoring/status
+            path: /rest/monitoring/status
+            port: 9900
+          initialDelaySeconds: 30 # Increased to account for UM startup time
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /rest/monitoring/status
+            port: 9900
+          initialDelaySeconds: 60 # Increased to avoid premature restarts
+          periodSeconds: 20
+          failureThreshold: 3
+        resources: # Added to prevent resource contention
+          requests:
+            cpu: "100m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1024Mi"
+        volumeMounts:
         - name: um-data
-          persistentVolumeClaim:
-            claimName: um-data-pvc
+          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
         - name: um-config
-          configMap:
-            name: um-config
+          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
+          subPath: nserver.conf
+      volumes:
+      - name: um-data
+        persistentVolumeClaim:
+          claimName: um-data-pvc
+      - name: um-config
+        configMap:
+          name: um-config
+          items:
+          - key: nserver.conf # Ensure ConfigMap has this key
+            path: nserver.conf
