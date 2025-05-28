@@ -4,7 +4,7 @@ metadata:
   name: deployment-1
   namespace: um-deployment
 spec:
-  replicas: 2 # Reduced to 2 to ease resource pressure
+  replicas: 1  # Start with 1 replica to reduce resource contention
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -25,10 +25,10 @@ spec:
         ports:
         - containerPort: 9900
           name: nsp
-        - containerPort: 9000 # For admin console (optional)
+        - containerPort: 9000
           name: admin
         readinessProbe:
-          tcpSocket: # Reverted to tcpSocket as /rest/monitoring/status may not be supported
+          tcpSocket:
             port: 9900
           initialDelaySeconds: 30
           periodSeconds: 10
@@ -41,11 +41,13 @@ spec:
           failureThreshold: 3
         resources:
           requests:
-            cpu: "50m" # Reduced to ease scheduling
-            memory: "256Mi" # Reduced
+            cpu: "50m"
+            memory: "256Mi"
+            ephemeral-storage: "512Mi"
           limits:
             cpu: "250m"
             memory: "512Mi"
+            ephemeral-storage: "1Gi"
         volumeMounts:
         - name: um-data
           mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
