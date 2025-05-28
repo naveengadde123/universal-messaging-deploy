@@ -13,10 +13,13 @@ ENV PATH=$UM_SERVER_HOME/bin:$PATH
 # Create UM directory
 RUN mkdir -p $UM_SERVER_HOME
 
-# Copy UM installation files
-COPY . $UM_SERVER_HOME
+# Copy UM installation files into the correct directory
+COPY UniversalMessaging $UM_HOME
 
-# Expose UM ports
+# Ensure the start script is executable
+RUN chmod +x $UM_SERVER_HOME/start-server.sh
+
+# Expose necessary ports
 EXPOSE 9900 9000
 
 # Set working directory
