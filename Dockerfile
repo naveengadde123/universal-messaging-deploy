@@ -16,14 +16,11 @@ RUN mkdir -p $UM_SERVER_HOME
 # Copy UM installation files
 COPY . $UM_SERVER_HOME
 
-# Ensure nserverdaemon is executable
-RUN chmod +x $UM_SERVER_HOME/bin/nserverdaemon
-
 # Expose UM ports
 EXPOSE 9900 9000
 
 # Set working directory
-WORKDIR $UM_SERVER_HOME/bin
+WORKDIR $UM_SERVER_HOME
 
 # Start UM server
-CMD ["./nserverdaemon", "console"]
+CMD ["./start-server.sh"]
