@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: um-container
-        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
+        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container
         imagePullPolicy: Always
         ports:
         - containerPort: 9900
