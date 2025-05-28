@@ -1,5 +1,10 @@
 FROM openjdk:11-jre-slim
-WORKDIR /opt/um
+
+# Add UM installation files
 COPY . /opt/um
-RUN chmod +x /opt/um/scripts/start-server.sh
-CMD ["/opt/um/scripts/start-server.sh"]
+
+# Set environment variables or other setup as needed
+WORKDIR /opt/um
+
+# Define startup command
+CMD ["./start-server.sh"]
