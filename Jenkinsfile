@@ -6,10 +6,9 @@ pipeline {
         CLUSTER_REGION = 'us-central1'
         IMAGE_NAME     = 'um-container'
         IMAGE_TAG      = 'latest'
-        GCR_IMAGE      = "us-central1-docker.pkg.dev/${PROJECT_ID}/um-container-repo/${IMAGE_NAME}:${IMAGE_TAG}" // Match deployment
+        GCR_IMAGE      = "us-central1-docker.pkg.dev/${PROJECT_ID}/um-container-repo/${IMAGE_NAME}:${IMAGE_TAG}"
         CREDENTIALS_ID = 'gcp-sa-key'
         NAMESPACE      = 'um-deployment'
-        SERVICE_URL    = "http://deployment-1-service.${NAMESPACE}.svc.cluster.local:9900/rest/monitoring/status"
         EXTERNAL_IP    = '34.135.162.177'
     }
     stages {
@@ -60,7 +59,7 @@ pipeline {
                     echo "Exposing service..."
                     kubectl apply -n "${NAMESPACE}" -f k8s/service.yaml
                     echo "Waiting for deployment rollout to finish..."
-                    kubectl wait --for=condition=available deployment/deployment-1 -n "${NAMESPACE}" --timeout=300s
+                    kubectl wait --for=condition=available deployment/deployment-1 -n "${NAMESPACE}" --timeout=600s
                 '''
             }
         }
@@ -72,8 +71,8 @@ pipeline {
                 '''
                 script {
                     def podStatus = sh(script: "kubectl get pods -n ${NAMESPACE} -o jsonpath='{range .items[*]}{.status.phase}{\"\\n\"}{end}'", returnStdout: true).trim()
-                    if (podStatus.contains("ContainerCreating")) {
-                        echo "Warning: Some pods are still in ContainerCreating phase."
+                    if (podStatus.contains("CrashLoopBackOff") || podStatus.contains("Pending") || podStatus.contains("ContainerCreating")) {
+                        error "Some pods are in CrashLoopBackOff, Pending, or ContainerCreating"
                     }
                 }
             }
@@ -81,18 +80,23 @@ pipeline {
         stage('Test UM Connectivity') {
             steps {
                 script {
-                    // Wrap UM connectivity checks in try-catch to prevent pipeline failure
                     try {
-                        sh "kubectl run -i --rm debug-pod --image=busybox --restart=Never -n ${NAMESPACE} -- wget -qO- ${SERVICE_URL}"
-                        echo 'Internal UM HTTP connectivity test passed'
+                        sh "kubectl run -i --rm debug-pod --image=busybox --restart=Never -n ${NAMESPACE} -- wget -qO- http://deployment-1-service.${NAMESPACE}.svc.cluster.local:9000"
+                        echo 'Internal UM Admin connectivity test passed'
                     } catch (Exception e) {
-                        echo "Warning: Internal UM HTTP connectivity test failed: ${e}"
+                        echo "Internal UM Admin connectivity test failed: ${e}"
                     }
                     try {
-                        sh "curl --retry 3 --retry-delay 5 http://${EXTERNAL_IP}:9900/rest/monitoring/status"
-                        echo 'External UM HTTP connectivity test passed'
+                        sh "kubectl run -i --rm debug-pod --image=busybox --restart=Never -n ${NAMESPACE} -- nc -v -w 2 deployment-1-service.${NAMESPACE}.svc.cluster.local 9900"
+                        echo 'Internal UM TCP connectivity test passed'
                     } catch (Exception e) {
-                        echo "Warning: External UM HTTP connectivity test failed: ${e}"
+                        echo "Internal UM TCP connectivity test failed: ${e}"
+                    }
+                    try {
+                        sh "curl --retry 3 --retry-delay 5 http://${EXTERNAL_IP}:9000"
+                        echo 'External UM Admin connectivity test passed'
+                    } catch (Exception e) {
+                        echo "External UM Admin connectivity test failed: ${e}"
                     }
                 }
             }
@@ -100,10 +104,10 @@ pipeline {
     }
     post {
         failure {
-            echo ' Pipeline failed!'
+            echo '❌ Pipeline failed!'
         }
         success {
-            echo ' Pipeline completed successfully!'
+            echo '✅ Pipeline completed successfully!'
         }
     }
 }

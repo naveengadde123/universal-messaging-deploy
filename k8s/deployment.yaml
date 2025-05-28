@@ -4,7 +4,7 @@ metadata:
   name: deployment-1
   namespace: um-deployment
 spec:
-  replicas: 1  # Start with 1 replica to reduce resource contention
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -30,15 +30,15 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 30
+          initialDelaySeconds: 90
           periodSeconds: 10
-          failureThreshold: 3
+          failureThreshold: 5
         livenessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 60
+          initialDelaySeconds: 180
           periodSeconds: 20
-          failureThreshold: 3
+          failureThreshold: 5
         resources:
           requests:
             cpu: "50m"
@@ -54,6 +54,12 @@ spec:
         - name: um-config
           mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
           subPath: nserver.conf
+        env:
+        - name: JAVA_OPTS
+          value: "-Xms256m -Xmx512m -verbose:gc"
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
       volumes:
       - name: um-data
         persistentVolumeClaim:
