@@ -1,16 +1,11 @@
 FROM openjdk:11-jre-slim
 
-# Create working directory
-WORKDIR /opt/um
-
-# Copy UM installation files
+# Add UM installation files
 COPY . /opt/um
 
-# Ensure the start script is executable
-RUN chmod +x /opt/um/start-server.sh
+# Set environment variables or other setup as needed
+WORKDIR /opt/um
 
-# Optional: Expose the port Universal Messaging uses (default: 9900)
-EXPOSE 9900
-
-# Start the UM server
+# Define startup command
 CMD ["./start-server.sh"]
+
