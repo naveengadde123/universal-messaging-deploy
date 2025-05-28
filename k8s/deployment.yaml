@@ -44,8 +44,8 @@ spec:
             cpu: "50m" # Reduced to ease scheduling
             memory: "256Mi" # Reduced
           limits:
-            cpu: "500m"
-            memory: "1024Mi"
+            cpu: "250m"
+            memory: "512Mi"
         volumeMounts:
         - name: um-data
           mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
