@@ -5,13 +5,19 @@ metadata:
   namespace: um-deployment
   labels:
     app: deployment-1
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}' # Enable Network Endpoint Groups for better load balancing
 spec:
   selector:
     app: deployment-1
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster # Changed to Cluster for better pod availability
   ports:
-    - name: nsp
-      protocol: TCP
-      port: 9900
-      targetPort: 9900
+  - name: nsp
+    protocol: TCP
+    port: 9900
+    targetPort: 9900
+  - name: admin
+    protocol: TCP
+    port: 9000
+    targetPort: 9000 # For UM admin console (optional, remove if not needed)

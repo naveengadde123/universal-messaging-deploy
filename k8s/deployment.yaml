@@ -4,12 +4,12 @@ metadata:
   name: deployment-1
   namespace: um-deployment
 spec:
-  replicas: 3
+  replicas: 2 # Reduced to 2 to ease resource pressure
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-      maxSurge: 1 # Allow one extra pod during rollout to speed up updates
+      maxSurge: 1
   selector:
     matchLabels:
       app: deployment-1
@@ -25,26 +25,24 @@ spec:
         ports:
         - containerPort: 9900
           name: nsp
-        - containerPort: 9000 # Added for UM admin console (optional, confirm if needed)
+        - containerPort: 9000 # For admin console (optional)
           name: admin
         readinessProbe:
-          httpGet: # Use HTTP if UM supports /rest/monitoring/status
-            path: /rest/monitoring/status
+          tcpSocket: # Reverted to tcpSocket as /rest/monitoring/status may not be supported
             port: 9900
-          initialDelaySeconds: 30 # Increased to account for UM startup time
+          initialDelaySeconds: 30
           periodSeconds: 10
           failureThreshold: 3
         livenessProbe:
-          httpGet:
-            path: /rest/monitoring/status
+          tcpSocket:
             port: 9900
-          initialDelaySeconds: 60 # Increased to avoid premature restarts
+          initialDelaySeconds: 60
           periodSeconds: 20
           failureThreshold: 3
-        resources: # Added to prevent resource contention
+        resources:
           requests:
-            cpu: "100m"
-            memory: "512Mi"
+            cpu: "50m" # Reduced to ease scheduling
+            memory: "256Mi" # Reduced
           limits:
             cpu: "500m"
             memory: "1024Mi"
@@ -62,5 +60,5 @@ spec:
         configMap:
           name: um-config
           items:
-          - key: nserver.conf # Ensure ConfigMap has this key
+          - key: nserver.conf
             path: nserver.conf
