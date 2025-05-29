@@ -1,16 +1,13 @@
 FROM openjdk:11-jre-slim
 
-# Copy only the relevant UniversalMessaging directory into the expected path
-COPY softwareAG3/UniversalMessaging /opt/um/UniversalMessaging
+# Copy the entire local directory (context) into /opt/um inside container
+COPY . /opt/um
 
-# Ensure the binary is executable
-RUN chmod +x /opt/um/UniversalMessaging/server/umserver/bin/nserverdaemon
-
-# Set the working directory to where the UM server binary is
+# Set working directory where nserverdaemon executable is located
 WORKDIR /opt/um/UniversalMessaging/server/umserver/bin
 
-# Set Java options environment variable
+# (Optional) Set Java options environment variable if your UM needs it
 ENV JAVA_OPTS="-Xms256m -Xmx512m -verbose:gc"
 
-# Run the nserverdaemon with 'console' argument
+# Run the nserverdaemon executable with 'console' argument
 CMD ["./nserverdaemon", "console"]
