@@ -5,8 +5,8 @@ metadata:
   namespace: um-deployment
 spec:
   accessModes:
-    - ReadWriteOnce      # GKE standard PD only supports single-node attach
-  storageClassName: standard
+    - ReadWriteOnce      # ✅ Valid for standard GKE PDs
+  storageClassName: standard  # ✅ GKE Autopilot default is usually 'standard'
   resources:
     requests:
-      storage: 10Gi
+      storage: 10Gi      # ✅ Reasonable
