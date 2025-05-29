@@ -50,9 +50,9 @@ spec:
             ephemeral-storage: "1Gi"
         volumeMounts:
         - name: um-data
-          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
+          mountPath: /opt/um/UniversalMessaging/server/umserver/data
         - name: um-config
-          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
+          mountPath: /opt/um/UniversalMessaging/server/umserver/bin/nserver.conf
           subPath: nserver.conf
         env:
         - name: JAVA_OPTS
@@ -60,6 +60,7 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
+        workingDir: /opt/um/UniversalMessaging/server/umserver/bin
       volumes:
       - name: um-data
         persistentVolumeClaim:
