@@ -1,10 +1,13 @@
 FROM openjdk:11-jre-slim
 
-# Add UM installation files
+# Copy entire UM directory into container
 COPY . /opt/um
 
-# Set environment variables or other setup as needed
-WORKDIR /opt/um
+# Set working directory to where nserverdaemon is actually located
+WORKDIR /opt/um/UniversalMessaging/server/umserver/bin
 
-# Define startup command
+# Set environment variables (if needed)
+ENV JAVA_OPTS="-Xms256m -Xmx512m -verbose:gc"
+
+# Start the server
 CMD ["./nserverdaemon", "console"]
