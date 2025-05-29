@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables
-ENV UM_HOME=/home/vkraft/softwareAG3/UniversalMessaging
+ENV UM_HOME=/opt/softwareAG/UniversalMessaging
 ENV UM_SERVER_HOME=$UM_HOME/server/umserver
 ENV PATH=$UM_SERVER_HOME/bin:$PATH
 
