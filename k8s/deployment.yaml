@@ -22,6 +22,8 @@ spec:
       - name: um-container
         image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
         imagePullPolicy: Always
+        command: ["/opt/um/UniversalMessaging/server/umserver/bin/nserverdaemon"]
+        args: ["console"]
         ports:
         - containerPort: 9900
           name: nsp
@@ -60,7 +62,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-        workingDir: /opt/um/UniversalMessaging/server/umserver/bin
       volumes:
       - name: um-data
         persistentVolumeClaim:
