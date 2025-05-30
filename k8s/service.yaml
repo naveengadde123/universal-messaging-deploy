@@ -19,5 +19,5 @@ spec:
       targetPort: 9900
     - name: admin
       protocol: TCP
-      port: 9000
-      targetPort: 9000
+      port: 9001
+      targetPort: 9001

@@ -13,9 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir -p $UM_SERVER_HOME/bin $UM_SERVER_HOME/lib $UM_SERVER_HOME/data
 
-COPY UniversalMessaging $UM_HOME
-
-RUN echo '#!/bin/bash\nset -e\ncd $UM_SERVER_HOME/bin\nexec java $JAVA_OPTS -jar ../lib/nirvana.jar -config nserver.conf' > $UM_SERVER_HOME/bin/start-server.sh && \
+RUN echo '#!/bin/bash\nset -e\necho "Placeholder UM startup"\nsleep infinity' > $UM_SERVER_HOME/bin/start-server.sh && \
     chmod +x $UM_SERVER_HOME/bin/start-server.sh
 
 EXPOSE 9900 9001
