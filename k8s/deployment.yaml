@@ -25,7 +25,7 @@ spec:
         ports:
         - containerPort: 9900
           name: nsp
-        - containerPort: 9000
+        - containerPort: 9001
           name: admin
         readinessProbe:
           tcpSocket:

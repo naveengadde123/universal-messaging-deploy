@@ -15,9 +15,10 @@ RUN mkdir -p $UM_SERVER_HOME/bin $UM_SERVER_HOME/lib $UM_SERVER_HOME/data
 
 COPY UniversalMessaging $UM_HOME
 
-RUN if [ -f "$UM_SERVER_HOME/bin/start-server.sh" ]; then chmod +x "$UM_SERVER_HOME/bin/start-server.sh"; else echo '#!/bin/bash\nset -e\ncd $UM_SERVER_HOME/bin\nexec java $JAVA_OPTS -jar ../lib/nirvana.jar -config nserver.conf' > $UM_SERVER_HOME/bin/start-server.sh && chmod +x $UM_SERVER_HOME/bin/start-server.sh; fi
+RUN echo '#!/bin/bash\nset -e\ncd $UM_SERVER_HOME/bin\nexec java $JAVA_OPTS -jar ../lib/nirvana.jar -config nserver.conf' > $UM_SERVER_HOME/bin/start-server.sh && \
+    chmod +x $UM_SERVER_HOME/bin/start-server.sh
 
-EXPOSE 9900 9000
+EXPOSE 9900 9001
 
 WORKDIR $UM_SERVER_HOME
 
