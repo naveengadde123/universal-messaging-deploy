@@ -4,7 +4,7 @@ metadata:
   name: deployment-1
   namespace: um-deployment
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -22,8 +22,6 @@ spec:
       - name: um-container
         image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
         imagePullPolicy: Always
-        command: ["/opt/um/UniversalMessaging/server/umserver/bin/nserverdaemon"]
-        args: ["console"]
         ports:
         - containerPort: 9900
           name: nsp
@@ -32,33 +30,33 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 60
-          periodSeconds: 5
-          failureThreshold: 3
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          failureThreshold: 5
         livenessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 90
-          periodSeconds: 10
-          failureThreshold: 3
+          initialDelaySeconds: 180
+          periodSeconds: 20
+          failureThreshold: 5
         resources:
           requests:
             cpu: "50m"
             memory: "256Mi"
             ephemeral-storage: "512Mi"
           limits:
-            cpu: "250m"
-            memory: "512Mi"
+            cpu: "1000m"
+            memory: "2048Mi"
             ephemeral-storage: "1Gi"
         volumeMounts:
         - name: um-data
-          mountPath: /opt/um/UniversalMessaging/server/umserver/data
+          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
         - name: um-config
-          mountPath: /opt/um/UniversalMessaging/server/umserver/bin/nserver.conf
+          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
           subPath: nserver.conf
         env:
         - name: JAVA_OPTS
-          value: "-Xms256m -Xmx512m -verbose:gc"
+          value: "-Xms256m -Xmx1024m -verbose:gc"
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000

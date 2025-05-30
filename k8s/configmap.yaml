@@ -9,4 +9,4 @@ data:
     REALM=nhp://0.0.0.0:9900
     SERVER_NAME=umserver
     LOG_LEVEL=INFO
-    DATA_DIR=/opt/um/UniversalMessaging/server/umserver/data
+    DATA_DIR=/home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data

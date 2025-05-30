@@ -81,7 +81,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh "kubectl run -i --rm debug-pod --image=busybox --restart=Never -n ${NAMESPACE} -- wget -qO- http://deployment-1-service.${NAMESPACE}.svc.cluster.local:9000"
+                        sh "kubectl run -i --rm debug-pod --image=busybox --restart=Never -n ${NAMESPACE} -- wget -qO- http://deployment-1-service.${NAMESPACE}.svc.cluster.local:9001"
                         echo 'Internal UM Admin connectivity test passed'
                     } catch (Exception e) {
                         echo "Internal UM Admin connectivity test failed: ${e}"
@@ -93,7 +93,7 @@ pipeline {
                         echo "Internal UM TCP connectivity test failed: ${e}"
                     }
                     try {
-                        sh "curl --retry 3 --retry-delay 5 http://${EXTERNAL_IP}:9000"
+                        sh "curl --retry 3 --retry-delay 5 http://${EXTERNAL_IP}:9001"
                         echo 'External UM Admin connectivity test passed'
                     } catch (Exception e) {
                         echo "External UM Admin connectivity test failed: ${e}"
