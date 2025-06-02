@@ -13,13 +13,13 @@ RUN apt-get update && apt-get install -y \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
-# Create directories
-RUN mkdir -p $UM_SERVER_HOME/bin $UM_SERVER_HOME/lib $UM_SERVER_HOME/data $UM_SERVER_HOME/logs
+# Create necessary directories
+RUN mkdir -p $UM_SERVER_HOME/data $UM_SERVER_HOME/logs
 
-# Copy UM files (add this if you have UM binaries locally)
-# COPY softwareAG3 /home/vkraft/softwareAG3/
+# ✅ Copy Universal Messaging binaries into image
+COPY softwareAG3 /home/vkraft/softwareAG3/
 
-# Add real UM startup script
+# ✅ Add real UM startup script
 COPY start-server.sh $UM_SERVER_HOME/bin/start-server.sh
 RUN chmod +x $UM_SERVER_HOME/bin/start-server.sh
 
@@ -29,5 +29,5 @@ EXPOSE 9900 9001
 # Set working directory
 WORKDIR $UM_SERVER_HOME
 
-# Start the UM server
+# ✅ Run startup script
 CMD ["./bin/start-server.sh"]
