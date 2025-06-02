@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
       - name: um-container
-        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest        imagePullPolicy: Always
+        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 9900
           name: nsp
@@ -29,7 +30,7 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 240        # Increased delay to give server more startup time
+          initialDelaySeconds: 240
           periodSeconds: 15
           timeoutSeconds: 5
           failureThreshold: 10
@@ -37,11 +38,10 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 360        # Increased delay to avoid premature restarts
+          initialDelaySeconds: 360
           periodSeconds: 30
           timeoutSeconds: 5
           failureThreshold: 10
-          successThreshold: 1
         resources:
           requests:
             cpu: "50m"
