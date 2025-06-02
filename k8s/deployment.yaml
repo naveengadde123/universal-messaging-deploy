@@ -20,8 +20,7 @@ spec:
     spec:
       containers:
       - name: um-container
-        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
-        imagePullPolicy: Always
+        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest        imagePullPolicy: Always
         ports:
         - containerPort: 9900
           name: nsp
