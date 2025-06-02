@@ -30,16 +30,16 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 180
-          periodSeconds: 10
+          initialDelaySeconds: 240        # Increased delay to give server more startup time
+          periodSeconds: 15
           timeoutSeconds: 5
           failureThreshold: 10
           successThreshold: 1
         livenessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 300
-          periodSeconds: 20
+          initialDelaySeconds: 360        # Increased delay to avoid premature restarts
+          periodSeconds: 30
           timeoutSeconds: 5
           failureThreshold: 10
           successThreshold: 1
