@@ -30,7 +30,7 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 240
+          initialDelaySeconds: 300
           periodSeconds: 15
           timeoutSeconds: 5
           failureThreshold: 10
@@ -38,7 +38,7 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 360
+          initialDelaySeconds: 420
           periodSeconds: 30
           timeoutSeconds: 5
           failureThreshold: 10
