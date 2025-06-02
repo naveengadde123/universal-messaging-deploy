@@ -73,3 +73,6 @@ spec:
           items:
           - key: nserver.conf
             path: nserver.conf
+      # Optional: constrain Pod to a zone (use if needed)
+      # nodeSelector:
+      #   topology.kubernetes.io/zone: us-central1-a
