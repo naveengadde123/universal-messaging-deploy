@@ -30,15 +30,19 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 90
+          initialDelaySeconds: 180
           periodSeconds: 10
-          failureThreshold: 5
+          timeoutSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
         livenessProbe:
           tcpSocket:
             port: 9900
-          initialDelaySeconds: 180
+          initialDelaySeconds: 300
           periodSeconds: 20
-          failureThreshold: 5
+          timeoutSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
         resources:
           requests:
             cpu: "50m"
@@ -48,15 +52,15 @@ spec:
             cpu: "1000m"
             memory: "2048Mi"
             ephemeral-storage: "1Gi"
+        env:
+        - name: JAVA_OPTS
+          value: "-Xms256m -Xmx1536m -verbose:gc"
         volumeMounts:
         - name: um-data
           mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
         - name: um-config
           mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
           subPath: nserver.conf
-        env:
-        - name: JAVA_OPTS
-          value: "-Xms256m -Xmx1024m -verbose:gc"
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000

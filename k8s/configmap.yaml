@@ -6,7 +6,7 @@ metadata:
 data:
   nserver.conf: |
     # Universal Messaging Server Configuration
-    REALM=nhp://0.0.0.0:9900
     SERVER_NAME=umserver
+    REALM=nsp://0.0.0.0:9900
     LOG_LEVEL=INFO
     DATA_DIR=/home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
