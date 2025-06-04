@@ -27,7 +27,9 @@ spec:
           name: nsp
         - containerPort: 9001
           name: admin
-        # ⛔ Probes removed for debugging
+        command: ["/home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserverdaemon"]
+        args: ["console"]
+        # Probes can be re-enabled later
         # readinessProbe:
         #   tcpSocket:
         #     port: 9900
