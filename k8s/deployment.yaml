@@ -27,21 +27,22 @@ spec:
           name: nsp
         - containerPort: 9001
           name: admin
-        readinessProbe:
-          tcpSocket:
-            port: 9900
-          initialDelaySeconds: 300
-          periodSeconds: 15
-          timeoutSeconds: 5
-          failureThreshold: 10
-          successThreshold: 1
-        livenessProbe:
-          tcpSocket:
-            port: 9900
-          initialDelaySeconds: 420
-          periodSeconds: 30
-          timeoutSeconds: 5
-          failureThreshold: 10
+        # ⛔ Probes removed for debugging
+        # readinessProbe:
+        #   tcpSocket:
+        #     port: 9900
+        #   initialDelaySeconds: 300
+        #   periodSeconds: 15
+        #   timeoutSeconds: 5
+        #   failureThreshold: 10
+        #   successThreshold: 1
+        # livenessProbe:
+        #   tcpSocket:
+        #     port: 9900
+        #   initialDelaySeconds: 420
+        #   periodSeconds: 30
+        #   timeoutSeconds: 5
+        #   failureThreshold: 10
         resources:
           requests:
             cpu: "50m"
@@ -73,6 +74,3 @@ spec:
           items:
           - key: nserver.conf
             path: nserver.conf
-      # Optional: constrain Pod to a zone (use if needed)
-      # nodeSelector:
-      #   topology.kubernetes.io/zone: us-central1-a
