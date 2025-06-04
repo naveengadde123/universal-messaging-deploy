@@ -11,13 +11,12 @@ RUN apt-get update && apt-get install -y \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p $UM_SERVER_HOME/bin $UM_SERVER_HOME/lib $UM_SERVER_HOME/data
-
-RUN echo '#!/bin/bash\nset -e\necho "Placeholder UM startup"\nsleep infinity' > $UM_SERVER_HOME/bin/start-server.sh && \
-    chmod +x $UM_SERVER_HOME/bin/start-server.sh
+# Copy the entire UniversalMessaging directory into the image
+COPY ./home/vkraft/softwareAG3/UniversalMessaging $UM_HOME
 
 EXPOSE 9900 9001
 
 WORKDIR $UM_SERVER_HOME
 
-CMD ["./bin/start-server.sh"]
+# Run the actual server daemon binary - update this command if needed
+CMD ["./bin/nserverdaemon", "console"]
