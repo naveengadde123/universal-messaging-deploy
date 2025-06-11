@@ -27,24 +27,22 @@ spec:
           name: nsp
         - containerPort: 9001
           name: admin
-        command: ["/home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserverdaemon"]
-        args: ["console"]
-        # Probes can be re-enabled later
-        # readinessProbe:
-        #   tcpSocket:
-        #     port: 9900
-        #   initialDelaySeconds: 300
-        #   periodSeconds: 15
-        #   timeoutSeconds: 5
-        #   failureThreshold: 10
-        #   successThreshold: 1
-        # livenessProbe:
-        #   tcpSocket:
-        #     port: 9900
-        #   initialDelaySeconds: 420
-        #   periodSeconds: 30
-        #   timeoutSeconds: 5
-        #   failureThreshold: 10
+        readinessProbe:
+          tcpSocket:
+            port: 9900
+          initialDelaySeconds: 180
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+        livenessProbe:
+          tcpSocket:
+            port: 9900
+          initialDelaySeconds: 300
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
         resources:
           requests:
             cpu: "50m"
