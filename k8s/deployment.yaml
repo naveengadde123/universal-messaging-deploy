@@ -19,58 +19,58 @@ spec:
         app: deployment-1
     spec:
       containers:
-      - name: um-container
-        image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 9900
-          name: nsp
-        - containerPort: 9001
-          name: admin
-        readinessProbe:
-          tcpSocket:
-            port: 9900
-          initialDelaySeconds: 180
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 10
-          successThreshold: 1
-        livenessProbe:
-          tcpSocket:
-            port: 9900
-          initialDelaySeconds: 300
-          periodSeconds: 20
-          timeoutSeconds: 5
-          failureThreshold: 10
-          successThreshold: 1
-        resources:
-          requests:
-            cpu: "50m"
-            memory: "256Mi"
-            ephemeral-storage: "512Mi"
-          limits:
-            cpu: "1000m"
-            memory: "2048Mi"
-            ephemeral-storage: "1Gi"
-        env:
-        - name: JAVA_OPTS
-          value: "-Xms256m -Xmx1536m -verbose:gc"
-        volumeMounts:
-        - name: um-data
-          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
-        - name: um-config
-          mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
-          subPath: nserver.conf
-        securityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
+        - name: um-container
+          image: us-central1-docker.pkg.dev/um-project-459607/um-container-repo/um-container:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9900
+              name: nsp
+            - containerPort: 9001
+              name: admin
+          readinessProbe:
+            tcpSocket:
+              port: 9900
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 10
+            successThreshold: 1
+          livenessProbe:
+            tcpSocket:
+              port: 9900
+            initialDelaySeconds: 300
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 10
+            successThreshold: 1
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+              ephemeral-storage: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2048Mi"
+              ephemeral-storage: "1Gi"
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms256m -Xmx1536m -verbose:gc"
+          volumeMounts:
+            - name: um-data
+              mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/data
+            - name: um-config
+              mountPath: /home/vkraft/softwareAG3/UniversalMessaging/server/umserver/bin/nserver.conf
+              subPath: nserver.conf
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
       volumes:
-      - name: um-data
-        persistentVolumeClaim:
-          claimName: um-data-pvc
-      - name: um-config
-        configMap:
-          name: um-config
-          items:
-          - key: nserver.conf
-            path: nserver.conf
+        - name: um-data
+          persistentVolumeClaim:
+            claimName: um-data-pvc
+        - name: um-config
+          configMap:
+            name: um-config
+            items:
+              - key: nserver.conf
+                path: nserver.conf
